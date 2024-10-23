@@ -19,7 +19,7 @@ jobs:
     - name: Install Python (if necessary)
       uses: actions/setup-python@v4
       with:
-        python-version: '3.8'  # Specify your required Python version
+        python-version: '3.12.3'  # Specify your required Python version
 
     - name: Set up Python venv
       run: |
