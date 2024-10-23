@@ -1,0 +1,24 @@
+{
+  "questions": [
+    {
+      "question": "When do you prefer to watch movies?",
+      "options": ["Morning", "Afternoon", "Evening", "Night"]
+    },
+    {
+      "question": "Who is your favorite actor?",
+      "options": ["Leonardo DiCaprio", "Tom Hanks", "Scarlett Johansson", "Meryl Streep"]
+    },
+    {
+      "question": "What type of movie do you prefer?",
+      "options": ["Action", "Comedy", "Drama", "Horror", "Science Fiction"]
+    },
+    {
+      "question": "Who is your favorite movie director?",
+      "options": ["Steven Spielberg", "Christopher Nolan", "Quentin Tarantino", "Martin Scorsese"]
+    },
+    {
+      "question": "What is your favorite movie genre?",
+      "options": ["Thriller", "Romance", "Adventure", "Fantasy", "Mystery"]
+    }
+  ]
+}
