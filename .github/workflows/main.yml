@@ -37,7 +37,7 @@ jobs:
     - name: Start Flask App in background
       run: |
         source venv/bin/activate  # Activate venv
-        nohup python your_flask_file.py &  # Start Flask app in background
+        nohup python flask.py &  # Start Flask app in background
 
     - name: Start Ngrok
       run: |
