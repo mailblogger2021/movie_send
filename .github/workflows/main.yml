@@ -1,0 +1,69 @@
+name: Ngrok and Telegram Webhook
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  start-ngrok-and-webhook:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Python (if necessary)
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'  # Specify your required Python version
+
+    - name: Set up Python venv
+      run: |
+        python -m venv venv  # Create a virtual environment
+        source venv/bin/activate  # Activate the virtual environment
+        python -m pip install --upgrade pip  # Upgrade pip inside venv
+        pip install -r requirements.txt  # Install dependencies inside venv
+
+    - name: Download and install Ngrok
+      run: |
+        curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null &&
+        echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list &&
+        sudo apt-get update && sudo apt-get install ngrok
+
+    - name: Start Flask App in background
+      run: |
+        source venv/bin/activate  # Activate venv
+        nohup python your_flask_file.py &  # Start Flask app in background
+
+    - name: Start Ngrok
+      run: |
+        nohup ngrok http 5000 &  # Start Ngrok tunnel on port 5000 (the port where your Flask app is running)
+
+    - name: Wait for Ngrok to start
+      run: sleep 10  # Wait for a few seconds to ensure Ngrok is up
+
+    - name: Get Ngrok public URL
+      run: |
+        curl http://localhost:4040/api/tunnels > tunnels.json  # Get the ngrok tunnels info
+        cat tunnels.json
+
+    - name: Set Telegram Webhook
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      run: |
+        NGROK_URL=$(cat tunnels.json | jq -r '.tunnels[0].public_url')
+        curl -F "url=${NGROK_URL}/${{ secrets.TELEGRAM_TOKEN }}" https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/setWebhook
+        echo "Webhook set to: ${NGROK_URL}"
+
+    - name: Run tests (optional)
+      run: |
+        source venv/bin/activate  # Activate venv
+        # Run any tests related to your bot
+        echo "Running tests..."
+
+    - name: Done
+      run: echo "Setup completed."
